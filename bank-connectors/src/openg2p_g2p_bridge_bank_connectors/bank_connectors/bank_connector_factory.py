@@ -13,7 +13,6 @@ class BankConnectorFactory(BaseService):
         connector = BankConnectorInterface.get_component(name=sponsor_bank_code)
         if connector is None:
             raise NotImplementedError(
-                f"Bank {sponsor_bank_code} is not supported. "
-                f"Configured banks: {list(_config.impls)}"
+                f"Bank {sponsor_bank_code} is not supported. Configured banks: {list(_config.impls)}"
             )
         return connector

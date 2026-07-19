@@ -34,7 +34,5 @@ class Settings(BaseSettings):
     # set G2P_BRIDGE_BANK_CONNECTORS_IMPLS, e.g.
     #   '{"MY-BANK": "my_pkg.MyBankConnector", "EXAMPLE-BANK": "...ExampleBankConnector"}'
     impls: dict[str, str] = {
-        "EXAMPLE-BANK": (
-            "openg2p_g2p_bridge_bank_connectors.bank_connectors.ExampleBankConnector"
-        )
+        "EXAMPLE-BANK": ("openg2p_g2p_bridge_bank_connectors.bank_connectors.ExampleBankConnector")
     }
