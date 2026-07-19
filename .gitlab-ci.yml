@@ -1,0 +1,23 @@
+# g2p-bridge-connectors CI.
+#
+# These are pure Python connector packages (interfaces + reference implementations).
+# They are NOT built into images here — the G2P Bridge (g2p-bridge) pulls them by
+# git ref and bakes them into its Celery image. So this repo only lints; there is no
+# docker/helm/publish here.
+
+stages:
+  - lint
+
+pre-commit:
+  stage: lint
+  image: python:3.12
+  variables:
+    PRE_COMMIT_HOME: "$CI_PROJECT_DIR/.cache/pre-commit"
+  cache:
+    key: pre-commit
+    paths:
+      - .cache/pre-commit
+  before_script:
+    - pip install pre-commit
+  script:
+    - pre-commit run --all-files --show-diff-on-failure
