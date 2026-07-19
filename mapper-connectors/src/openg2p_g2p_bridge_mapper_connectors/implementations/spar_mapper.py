@@ -26,6 +26,15 @@ class SPARMapper(MapperInterface):
     def __init__(self):
         super().__init__()
         self.client = SPARMapperClient.get_component()
+        if self.client is None:
+            # Fail fast at startup rather than surfacing a confusing
+            # "'NoneType' has no attribute 'resolve_request'" on first
+            # disbursement: the Initializer must register SPARMapperClient
+            # before constructing this implementation.
+            raise RuntimeError(
+                "SPARMapperClient is not registered; construct it in the "
+                "Initializer before the SPARMapper implementation."
+            )
 
     async def resolve(self, resolve_request: ResolveRequest) -> ResolveResponse | None:
         """

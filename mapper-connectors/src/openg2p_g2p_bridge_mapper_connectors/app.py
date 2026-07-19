@@ -15,11 +15,10 @@ _config = Settings.get_config()
 class Initializer(BaseInitializer):
     def initialize(self, **kwargs):
         MapperFactory()
-        # Register the configured mapper implementation (default: SPARMapper;
-        # override via G2P_BRIDGE_MAPPER_CONNECTORS_IMPL).
-        load_impl(_config.impl)()
-        # SPAR reference-impl setup (client + outbound signing). Only used by
-        # SPARMapper; a non-SPAR custom impl can ignore these.
+        # SPAR reference-impl setup (client + outbound signing). Register these
+        # BEFORE constructing the impl: SPARMapper.__init__ looks up
+        # SPARMapperClient via get_component(), so the client must already exist.
+        # Only used by SPARMapper; a non-SPAR custom impl can ignore these.
         SPARMapperClient()
         JWTValidationHelper()
         # Outbound SPAR-request signing helper, registered under the name the
@@ -27,3 +26,7 @@ class Initializer(BaseInitializer):
         # with the Bridge's own .p12); PM is verify-only, so force backend="local"
         # regardless of the inbound crypto_backend.
         build_crypto_helper(name=_config.spar_mapper_api_sign_crypto_helper_name, backend="local")
+        # Register the configured mapper implementation LAST, once its
+        # dependencies (above) are available (default: SPARMapper; override via
+        # G2P_BRIDGE_MAPPER_CONNECTORS_IMPL).
+        load_impl(_config.impl)()
