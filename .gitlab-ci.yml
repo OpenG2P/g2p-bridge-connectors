@@ -3,10 +3,33 @@
 # These are pure Python connector packages (interfaces + reference implementations).
 # They are NOT built into images here — the G2P Bridge (g2p-bridge) pulls them by
 # git ref and bakes them into its Celery image. So this repo only lints; there is no
-# docker/helm/publish here.
+# docker/helm build.
+#
+# It also publishes its version history to the OpenG2P versions catalogue via the
+# central openg2p/packaging pipeline in LIBRARY mode (CHANGELOG_KIND: library): a
+# rolling page per moving branch (last commits + summary since the last tag) and a
+# durable page per tag. No image or chart is built.
 
+include:
+  - project: 'openg2p/packaging'
+    ref: v1                       # keep EQUAL to PACKAGING_REF below
+    file: '/ci/gitlab/build-publish.yml'
+
+variables:
+  PACKAGING_REF: v1
+  CHANGELOG_KIND: library
+  # CHANGELOG_PROJECT (openg2p/versions) and CHANGELOG_TOKEN are group CI/CD variables,
+  # shared by every repo; set them here only if this project can't see them.
+
+# The include's jobs live in version/build/chart/changelog; build+chart are skipped for
+# a library. `lint` is this repo's own stage, so all stages must be declared here (a
+# local `stages:` overrides the included one).
 stages:
   - lint
+  - version
+  - build
+  - chart
+  - changelog
 
 pre-commit:
   stage: lint
