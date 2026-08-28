@@ -1,0 +1,38 @@
+name: Build & Publish
+
+# LIBRARY mode. These are pure Python connector packages: the G2P Bridge pulls them
+# by git ref and bakes them into its Celery image, so nothing is built here. The
+# pipeline only publishes this repo's version history to the catalogue -- a rolling
+# page per moving branch and a durable page per tag.
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["**"]
+  workflow_dispatch:
+    inputs:
+      changelog_skip_ai:
+        description: 'Skip the AI summary — publish the changelog from commit messages only (use when AI is unavailable). Leave OFF for a normal run.'
+        type: boolean
+        default: false
+      changelog_regenerate:
+        description: 'Backfill the AI summary for a release that published without one: enter its release version e.g. 1.0.1 (a bare N.N.N, not a develop version). Leave EMPTY for a normal run.'
+        type: string
+        default: ''
+
+jobs:
+  publish:
+    uses: openg2p/openg2p-packaging/.github/workflows/build-publish.yml@v1
+    # The reusable workflow's images/chart jobs declare packages: write and GitHub
+    # validates that at startup even though both are skipped for a library.
+    permissions:
+      contents: read
+      packages: write
+    with:
+      changelog_kind: library
+      changelog_skip_ai: ${{ inputs.changelog_skip_ai || false }}
+      changelog_regenerate: ${{ inputs.changelog_regenerate || '' }}
+      packaging-ref: v1
+    secrets:
+      OPENG2P_BOT_GITHUB_PAT: ${{ secrets.OPENG2P_BOT_GITHUB_PAT }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}

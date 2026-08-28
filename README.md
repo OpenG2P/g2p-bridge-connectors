@@ -1,6 +1,6 @@
 # g2p-bridge-connectors
 
-Pluggable **connectors** for the OpenG2P [G2P Bridge](https://gitlab.com/openg2p/g2p-bridge/g2p-bridge).
+Pluggable **connectors** for the OpenG2P [G2P Bridge](https://github.com/OpenG2P/g2p-bridge).
 This repo holds the **reference/standard** implementations of the connector
 interfaces the Bridge defines — bank, mapper, notification, geo, agency and
 warehouse — as independent Python packages:
@@ -69,7 +69,7 @@ class AcmeBankConnector(BankConnectorInterface):
 **2. Build a derived image** — a few lines, `FROM` the published Bridge Celery image:
 
 ```dockerfile
-FROM registry.gitlab.com/openg2p/g2p-bridge/g2p-bridge/celery:<version>
+FROM openg2p/openg2p-bridge-celery:<version>
 COPY acme-bank-connector /conn
 RUN pip install /conn
 ```
