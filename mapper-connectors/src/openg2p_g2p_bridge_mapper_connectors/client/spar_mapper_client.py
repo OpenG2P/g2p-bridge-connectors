@@ -5,7 +5,7 @@ import httpx
 import orjson
 from openg2p_fastapi_common.errors.base_exception import BaseAppException
 from openg2p_fastapi_common.service import BaseService
-from openg2p_fastapi_common.utils.crypto import CryptoHelper
+from openg2p_fastapi_common.crypto import CryptoHelper
 from openg2p_spar_models.schemas import ResolveRequest, ResolveResponse
 
 from ..config import Settings
